@@ -1,0 +1,17 @@
+﻿@model System.Collections.Generic.IEnumerable<AgileHub102018.Models.Puppets.Dog>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<form method="get" asp-action="GetByName">
+    <input type="text" name="name" />
+    <button type="submit">Trimite</button>
+</form>
+
+@foreach (var dog in Model)
+{
+    @Html.Partial("_Dog", dog)
+}
