@@ -1,42 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AgileHub102018.Entities;
 using AgileHub102018.Models.Puppets;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgileHub102018.Controllers
 {
     public class PuppetsController : Controller
     {
-        private readonly List<Dog> _dogs;
+        private List<Dog> _dogs;
+        private readonly AgileHubContext _agileHubContext;
 
-        public PuppetsController()
+        public PuppetsController(AgileHubContext agileHubContext)
         {
-            _dogs = new List<Dog>
-            {
-                new Dog()
-                {
-                    Name = "Rex"
-                },
-                new Dog()
-                {
-                    Name = "Laiza"
-                },
-                new Dog()
-                {
-                    Name = "Laika"
-                }
-            };
+            _agileHubContext = agileHubContext;
         }
 
         public IActionResult Index()
         {
+            _dogs = _agileHubContext
+                .Dogs
+                .Include(d => d.DogAddress)
+                .Select(d => MapEntityToModel(d))
+                .ToList();
+         
             return View(_dogs);
+        }
+
+        private Dog MapEntityToModel(DogEntity d)
+        {
+            return new Dog()
+            {
+                Name = d.Name,
+                BirthDay = d.BirthDay,
+                Id = d.Id,
+                DogAddress = new Address()
+                {
+                    City = d.DogAddress.City
+                },
+                CreditCard = d.CreditCard,
+                Email = d.Email,
+                Vaccines = new List<string>()
+            };
         }
 
         public IActionResult GetByName(string name)
         {
-            return View("Index", _dogs.Where(dog => dog.Name.Contains(name, StringComparison.OrdinalIgnoreCase)));
+            var dogs = _agileHubContext
+                .Dogs
+                .Include(d => d.DogAddress)
+                .Where(d => d.Name.Contains(name))
+                .ToList()
+                .Select(d => MapEntityToModel(d));
+
+            return View("Index", dogs);
         }
 
         [HttpGet]
@@ -50,6 +69,11 @@ namespace AgileHub102018.Controllers
         [HttpPost]
         public IActionResult Edit(Dog dog)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("_EditDog", dog);
+            }
+
             int index = _dogs.FindIndex(d => d.Id == dog.Id);
             _dogs[index] = dog;
 

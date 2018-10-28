@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using AgileHub102018.ValidationAtributes;
 
-namespace AgileHub102018.Models.Puppets
+namespace AgileHub102018.Entities
 {
-    public class Dog
+    public class DogEntity
     {
         [StringLength(100)]
         public string Name { get; set; }
@@ -14,10 +12,7 @@ namespace AgileHub102018.Models.Puppets
 
         public int Id { get; set; }
 
-        public Address DogAddress { get; set; }
-
-        [Vaccine(ErrorMessage = "asdadce")]
-        public IList<string> Vaccines { get; set; }
+        public AddressEntity DogAddress { get; set; }
 
         [CreditCard]
         public string CreditCard { get; set; }
