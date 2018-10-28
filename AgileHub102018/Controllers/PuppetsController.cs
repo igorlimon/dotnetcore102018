@@ -2,18 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using AgileHub102018.Models.Puppets;
-using ListOperation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileHub102018.Controllers
 {
     public class PuppetsController : Controller
     {
-        private readonly IDataList _dataList;
+        private readonly List<Dog> _dogs;
 
-        public PuppetsController(IDataList dataList)
+        public PuppetsController()
         {
-            _dataList = dataList;
+            _dogs = new List<Dog>
+            {
+                new Dog()
+                {
+                    Name = "Rex"
+                },
+                new Dog()
+                {
+                    Name = "Laiza"
+                },
+                new Dog()
+                {
+                    Name = "Laika"
+                }
+            };
         }
 
         public IActionResult Index()
